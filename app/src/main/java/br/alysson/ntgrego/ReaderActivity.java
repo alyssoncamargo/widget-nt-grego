@@ -3,12 +3,8 @@ package br.alysson.ntgrego;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.text.InputType;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -17,19 +13,11 @@ import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
 import android.text.style.SuperscriptSpan;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ReaderActivity extends Activity {
 
@@ -37,15 +25,12 @@ public class ReaderActivity extends Activity {
     public static final String EXTRA_END = "end";
 
     private int start, end;
-    private int loadToken = 0;
-    private TextView ref, greek, tb, nvi, nviOpen;
+    private TextView ref, greek, tb;
     private View panel;
     private TextView pWord, pLemma, pGloss, pPos, pDetails;
     private BackgroundColorSpan highlight;
     private SpannableStringBuilder greekSpans;
 
-    private final ExecutorService io = Executors.newSingleThreadExecutor();
-    private final Handler ui = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle state) {
@@ -55,8 +40,6 @@ public class ReaderActivity extends Activity {
         ref = findViewById(R.id.ref);
         greek = findViewById(R.id.greek);
         tb = findViewById(R.id.tb);
-        nvi = findViewById(R.id.nvi);
-        nviOpen = findViewById(R.id.nvi_open);
         panel = findViewById(R.id.panel);
         pWord = findViewById(R.id.p_word);
         pLemma = findViewById(R.id.p_lemma);
@@ -73,7 +56,6 @@ public class ReaderActivity extends Activity {
         findViewById(R.id.today).setOnClickListener(v -> showToday());
         findViewById(R.id.menu).setOnClickListener(v -> openMenu());
         findViewById(R.id.p_close).setOnClickListener(v -> closePanel());
-        nviOpen.setOnClickListener(v -> openWeb("NVI"));
 
         fromIntent(getIntent());
     }
@@ -82,12 +64,6 @@ public class ReaderActivity extends Activity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         fromIntent(intent);
-    }
-
-    @Override
-    protected void onDestroy() {
-        io.shutdownNow();
-        super.onDestroy();
     }
 
     @Override
@@ -118,7 +94,6 @@ public class ReaderActivity extends Activity {
         closePanel();
         buildGreek();
         tb.setText(buildTb());
-        loadNvi();
     }
 
     // ---------- Grego clicável ----------
@@ -218,92 +193,22 @@ public class ReaderActivity extends Activity {
         return sb;
     }
 
-    private void loadNvi() {
-        final int token = ++loadToken;
-        final int s = start, e = end;
-        final int vid = VerseRepo.versionId(this, "NVI");
-        nvi.setText("carregando…");
-        nvi.setAlpha(0.5f);
-        io.submit(() -> {
-            SpannableStringBuilder sb = new SpannableStringBuilder();
-            boolean ok = true;
-            for (int vi = s; vi <= e; vi++) {
-                VerseRepo.Verse v = VerseRepo.get(this, vi);
-                String t = OnlineVerse.fetch(vid, v.usfm(), "NVI", v.reference());
-                if (t == null) { ok = false; break; }
-                if (e > s) appendVerseNumber(sb, v.verse);
-                sb.append(t).append(' ');
-            }
-            final boolean fine = ok;
-            ui.post(() -> {
-                if (token != loadToken) return;
-                nvi.setAlpha(1f);
-                if (fine) {
-                    nvi.setText(sb);
-                } else {
-                    SpannableStringBuilder msg = new SpannableStringBuilder("Não foi possível carregar a NVI (sem internet?). Toque abaixo para abrir no site.");
-                    msg.setSpan(new StyleSpan(Typeface.ITALIC), 0, msg.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    nvi.setText(msg);
-                }
-            });
-        });
-    }
-
     private void openWeb(String abbr) {
         VerseRepo.Passage p = VerseRepo.passage(this, start, end);
-        String u = OnlineVerse.url(VerseRepo.versionId(this, abbr), p.usfm(), abbr);
+        String u = "https://www.bible.com/pt/bible/" + VerseRepo.versionId(this, abbr) + "/" + p.usfm() + "." + abbr;
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(u)));
     }
 
     // ---------- Menu ----------
 
     private void openMenu() {
-        String[] items = {"Aparência do widget", "Abrir no YouVersion (TB)", "Abrir no YouVersion (NVI)", "Versão online da NVI…"};
+        String[] items = {"Aparência do widget", "Abrir no YouVersion"};
         new AlertDialog.Builder(this)
                 .setItems(items, (d, which) -> {
-                    switch (which) {
-                        case 0: startActivity(new Intent(this, ConfigActivity.class)); break;
-                        case 1: openWeb("TB"); break;
-                        case 2: openWeb("NVI"); break;
-                        case 3: openVersionSettings(); break;
-                    }
+                    if (which == 0) startActivity(new Intent(this, ConfigActivity.class));
+                    else openWeb("TB");
                 })
                 .show();
     }
 
-    /** Permite colar um link do bible.com (ou só o número) para trocar a versão usada na seção NVI. */
-    private void openVersionSettings() {
-        LinearLayout box = new LinearLayout(this);
-        box.setOrientation(LinearLayout.VERTICAL);
-        int pad = (int) (20 * getResources().getDisplayMetrics().density);
-        box.setPadding(pad, pad / 2, pad, 0);
-        TextView hint = new TextView(this);
-        hint.setText("Cole um link do bible.com da versão (ex.: bible.com/pt/bible/129/JHN.3.16.NVI) ou só o número.");
-        box.addView(hint);
-        EditText field = new EditText(this);
-        field.setHint("atual: " + VerseRepo.versionId(this, "NVI"));
-        field.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
-        box.addView(field);
-        new AlertDialog.Builder(this)
-                .setTitle("Versão NVI")
-                .setView(box)
-                .setPositiveButton("Salvar", (d, w) -> {
-                    Integer id = parseId(field.getText().toString());
-                    if (id != null) {
-                        VerseRepo.setVersionId(this, "NVI", id);
-                        Toast.makeText(this, "Salvo", Toast.LENGTH_SHORT).show();
-                        loadNvi();
-                    }
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
-    }
-
-    private static Integer parseId(String s) {
-        s = s.trim();
-        if (s.isEmpty()) return null;
-        if (s.matches("\\d+")) return Integer.parseInt(s);
-        Matcher m = Pattern.compile("/(?:bible|versions)/(\\d+)").matcher(s);
-        return m.find() ? Integer.parseInt(m.group(1)) : null;
-    }
 }
