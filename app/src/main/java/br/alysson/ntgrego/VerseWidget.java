@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.util.TypedValue;
 import android.widget.RemoteViews;
 
 public class VerseWidget extends AppWidgetProvider {
@@ -44,6 +45,14 @@ public class VerseWidget extends AppWidgetProvider {
         RemoteViews rv = new RemoteViews(ctx.getPackageName(), R.layout.widget);
         rv.setTextViewText(R.id.w_text, v.text);
         rv.setTextViewText(R.id.w_ref, v.reference());
+
+        WidgetStyle st = WidgetStyle.load(ctx);
+        rv.setInt(R.id.w_bg, "setColorFilter", st.bgColor | 0xFF000000);
+        rv.setInt(R.id.w_bg, "setImageAlpha", st.alpha255());
+        rv.setTextColor(R.id.w_text, st.textColor);
+        rv.setTextViewTextSize(R.id.w_text, TypedValue.COMPLEX_UNIT_SP, st.fontSize);
+        rv.setTextColor(R.id.w_ref, st.refColor);
+        rv.setTextColor(R.id.w_shuffle, st.subtleColor());
 
         Intent open = new Intent(ctx, ReaderActivity.class)
                 .putExtra(ReaderActivity.EXTRA_START, v.first.index)

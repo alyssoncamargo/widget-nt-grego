@@ -13,7 +13,6 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingHorizontal="8dp">
-
         <Button android:id="@+id/prev" style="@style/IconBtn" android:text="‹" />
         <TextView
             android:id="@+id/ref"
@@ -26,47 +25,117 @@
             android:textColor="@color/accent" />
         <Button android:id="@+id/next" style="@style/IconBtn" android:text="›" />
         <Button android:id="@+id/today" style="@style/IconBtn" android:text="☀" android:textSize="18sp" />
-        <Button android:id="@+id/settings" style="@style/IconBtn" android:text="⚙" android:textSize="18sp" />
+        <Button android:id="@+id/menu" style="@style/IconBtn" android:text="⋮" android:textSize="22sp" />
     </LinearLayout>
 
-    <!-- Grego -->
     <ScrollView
+        android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2">
-        <TextView
-            android:id="@+id/greek"
+        android:layout_weight="1">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp"
-            android:fontFamily="serif"
-            android:textSize="24sp"
-            android:lineSpacingMultiplier="1.25"
-            android:textIsSelectable="true"
-            android:textColor="@color/fg" />
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="24dp">
+
+            <TextView
+                android:id="@+id/greek"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:fontFamily="serif"
+                android:textSize="25sp"
+                android:lineSpacingMultiplier="1.35"
+                android:textColor="@color/fg" />
+
+            <TextView
+                android:id="@+id/hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Toque numa palavra para ver a análise"
+                android:textSize="12sp"
+                android:textColor="@color/muted" />
+
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:layout_marginTop="18dp" android:background="@color/line" />
+
+            <TextView style="@style/SectionLabel" android:text="TB · Tradução Brasileira" />
+            <TextView android:id="@+id/tb" style="@style/TransText" />
+
+            <TextView style="@style/SectionLabel" android:text="NVI · Nova Versão Internacional" />
+            <TextView android:id="@+id/nvi" style="@style/TransText" />
+            <TextView
+                android:id="@+id/nvi_open"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingVertical="6dp"
+                android:text="abrir no bible.com ↗"
+                android:textSize="13sp"
+                android:textColor="@color/accent" />
+        </LinearLayout>
     </ScrollView>
 
-    <!-- Abas -->
+    <!-- Painel de análise da palavra -->
     <LinearLayout
+        android:id="@+id/panel"
         android:layout_width="match_parent"
-        android:layout_height="44dp"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:background="@color/bar"
-        android:gravity="center_vertical">
-        <Button android:id="@+id/tab_tb" style="@style/TabBtn" android:text="TB" />
-        <Button android:id="@+id/tab_both" style="@style/TabBtn" android:text="TB + NVI" />
-        <Button android:id="@+id/tab_nvi" style="@style/TabBtn" android:text="NVI" />
-        <Button android:id="@+id/youversion" style="@style/TabBtn" android:text="↗" android:layout_weight="0.5" />
-    </LinearLayout>
+        android:paddingHorizontal="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="16dp"
+        android:visibility="gone">
 
-    <!-- Traduções -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:orientation="vertical">
-        <WebView android:id="@+id/web_tb" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
-        <View android:id="@+id/web_divider" android:layout_width="match_parent" android:layout_height="3dp" android:background="@color/accent" />
-        <WebView android:id="@+id/web_nvi" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:id="@+id/p_word"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="serif"
+                android:textSize="26sp"
+                android:textColor="@color/fg" />
+            <Button android:id="@+id/p_close" style="@style/IconBtn" android:text="✕" android:textSize="18sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/p_lemma"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="serif"
+            android:textSize="17sp"
+            android:textColor="@color/accent" />
+        <TextView
+            android:id="@+id/p_gloss"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textSize="15sp"
+            android:textStyle="italic"
+            android:textColor="@color/fg" />
+        <TextView
+            android:id="@+id/p_pos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@color/fg" />
+        <TextView
+            android:id="@+id/p_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:lineSpacingMultiplier="1.2"
+            android:textColor="@color/fg" />
     </LinearLayout>
 </LinearLayout>

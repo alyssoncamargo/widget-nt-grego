@@ -3,4 +3,7 @@
     <color name="fg">#FF1E1A16</color>
     <color name="bar">#FFEDE4D3</color>
     <color name="accent">#FFA0702A</color>
+    <color name="muted">#FF8A8076</color>
+    <color name="line">#22000000</color>
+    <color name="hl">#33A0702A</color>
 </resources>
