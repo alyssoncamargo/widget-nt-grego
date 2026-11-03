@@ -1,0 +1,6 @@
+<resources>
+    <color name="bg">#FFFAF6EE</color>
+    <color name="fg">#FF1E1A16</color>
+    <color name="bar">#FFEDE4D3</color>
+    <color name="accent">#FFA0702A</color>
+</resources>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="@color/bg">
+
+    <!-- Barra superior -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="8dp">
+
+        <Button android:id="@+id/prev" style="@style/IconBtn" android:text="‹" />
+        <TextView
+            android:id="@+id/ref"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/accent" />
+        <Button android:id="@+id/next" style="@style/IconBtn" android:text="›" />
+        <Button android:id="@+id/today" style="@style/IconBtn" android:text="☀" android:textSize="18sp" />
+        <Button android:id="@+id/settings" style="@style/IconBtn" android:text="⚙" android:textSize="18sp" />
+    </LinearLayout>
+
+    <!-- Grego -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2">
+        <TextView
+            android:id="@+id/greek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:fontFamily="serif"
+            android:textSize="24sp"
+            android:lineSpacingMultiplier="1.25"
+            android:textIsSelectable="true"
+            android:textColor="@color/fg" />
+    </ScrollView>
+
+    <!-- Abas -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:orientation="horizontal"
+        android:background="@color/bar"
+        android:gravity="center_vertical">
+        <Button android:id="@+id/tab_tb" style="@style/TabBtn" android:text="TB" />
+        <Button android:id="@+id/tab_both" style="@style/TabBtn" android:text="TB + NVI" />
+        <Button android:id="@+id/tab_nvi" style="@style/TabBtn" android:text="NVI" />
+        <Button android:id="@+id/youversion" style="@style/TabBtn" android:text="↗" android:layout_weight="0.5" />
+    </LinearLayout>
+
+    <!-- Traduções -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:orientation="vertical">
+        <WebView android:id="@+id/web_tb" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
+        <View android:id="@+id/web_divider" android:layout_width="match_parent" android:layout_height="3dp" android:background="@color/accent" />
+        <WebView android:id="@+id/web_nvi" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
+    </LinearLayout>
+</LinearLayout>

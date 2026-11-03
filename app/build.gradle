@@ -1,0 +1,25 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'br.alysson.ntgrego'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'br.alysson.ntgrego'
+        minSdk 26
+        targetSdk 35
+        versionCode = Integer.parseInt(System.getenv('GITHUB_RUN_NUMBER') ?: '1')
+        versionName = "1.0." + (System.getenv('GITHUB_RUN_NUMBER') ?: '0')
+    }
+    signingConfigs {
+        release {
+            storeFile file('release.keystore')
+            storePassword 'ntgrego123'
+            keyAlias 'ntgrego'
+            keyPassword 'ntgrego123'
+        }
+    }
+    buildTypes {
+        release { minifyEnabled false; signingConfig signingConfigs.release }
+    }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    androidResources { noCompress 'txt' }
+}
