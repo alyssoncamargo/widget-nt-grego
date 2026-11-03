@@ -14,3 +14,5 @@ Tocar no widget abre a tela dividida: **grego em cima**, **TB / NVI** embaixo (c
 Texto grego: *The Greek New Testament: SBL Edition* © 2010 Society of Biblical Literature e Logos Bible Software (via MorphGNT), uso conforme a [licença SBLGNT](https://sblgnt.com/license/).
 
 Referências cruzadas: [OpenBible.info](https://www.openbible.info/labs/cross-references/), CC-BY.
+
+**Nova versão:** altere o número em `VERSION` e faça push — o GitHub compila e publica a release.

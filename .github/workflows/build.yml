@@ -2,7 +2,6 @@ name: Build APK
 on:
   push:
     branches: [main]
-    tags: ['v*']
   workflow_dispatch:
 permissions:
   contents: write
@@ -19,9 +18,21 @@ jobs:
       - run: cp app/build/outputs/apk/release/app-release.apk NTGrego.apk
       - uses: actions/upload-artifact@v4
         with: { name: NTGrego-apk, path: NTGrego.apk }
-      - uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Versão
+        id: ver
+        run: echo "v=v$(cat VERSION | tr -d '[:space:]')" >> "$GITHUB_OUTPUT"
+      - name: Remover builds de teste antigos
+        env: { GH_TOKEN: '${{ github.token }}' }
+        run: |
+          for t in v1.0.1 v1.0.2; do gh release delete "$t" --yes --cleanup-tag -R "$GITHUB_REPOSITORY" || true; done
+      - name: Publicar release (atualiza o APK se a versão já existir)
+        uses: softprops/action-gh-release@v2
         with:
-          name: NT Grego ${{ github.ref_name }}
+          tag_name: ${{ steps.ver.outputs.v }}
+          target_commitish: ${{ github.sha }}
+          name: NT Grego ${{ steps.ver.outputs.v }}
           files: NTGrego.apk
           make_latest: true
+          body: |
+            Widget com trecho do dia do NT em grego (SBLGNT) + leitor TB/NVI.
+            Instale baixando o NTGrego.apk abaixo.
