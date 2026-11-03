@@ -21,9 +21,10 @@ import java.util.regex.Pattern;
 
 public class ReaderActivity extends Activity {
 
-    public static final String EXTRA_INDEX = "index";
+    public static final String EXTRA_START = "start";
+    public static final String EXTRA_END = "end";
 
-    private int index;
+    private int start, end;
     private String mode = "AMBAS"; // TB | NVI | AMBAS
     private TextView ref, greek;
     private WebView webTb, webNvi;
@@ -50,21 +51,34 @@ public class ReaderActivity extends Activity {
         bTb.setOnClickListener(v -> setMode("TB"));
         bNvi.setOnClickListener(v -> setMode("NVI"));
         bBoth.setOnClickListener(v -> setMode("AMBAS"));
-        findViewById(R.id.prev).setOnClickListener(v -> show(index - 1));
-        findViewById(R.id.next).setOnClickListener(v -> show(index + 1));
-        findViewById(R.id.today).setOnClickListener(v -> show(VerseRepo.today(this).index));
+        findViewById(R.id.prev).setOnClickListener(v -> show(start - 1, start - 1));
+        findViewById(R.id.next).setOnClickListener(v -> show(end + 1, end + 1));
+        findViewById(R.id.today).setOnClickListener(v -> showToday());
         findViewById(R.id.settings).setOnClickListener(v -> openSettings());
         findViewById(R.id.youversion).setOnClickListener(v -> openYouVersion());
 
-        index = getIntent().getIntExtra(EXTRA_INDEX, VerseRepo.today(this).index);
         applyMode();
-        show(index);
+        fromIntent(getIntent());
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        show(intent.getIntExtra(EXTRA_INDEX, VerseRepo.today(this).index));
+        fromIntent(intent);
+    }
+
+    private void fromIntent(Intent i) {
+        if (i != null && i.hasExtra(EXTRA_START)) {
+            int s = i.getIntExtra(EXTRA_START, 0);
+            show(s, i.getIntExtra(EXTRA_END, s));
+        } else {
+            showToday();
+        }
+    }
+
+    private void showToday() {
+        VerseRepo.Passage p = VerseRepo.today(this);
+        show(p.first.index, p.last.index);
     }
 
     private void setupWeb(WebView w) {
@@ -76,16 +90,17 @@ public class ReaderActivity extends Activity {
         w.setWebViewClient(new WebViewClient());
     }
 
-    private void show(int i) {
-        VerseRepo.Verse v = VerseRepo.get(this, i);
-        index = v.index;
+    private void show(int s, int e) {
+        VerseRepo.Passage v = VerseRepo.passage(this, s, e);
+        start = v.first.index;
+        end = v.last.index;
         ref.setText(v.reference());
         greek.setText(v.text);
         webTb.loadUrl(url("TB", v));
         webNvi.loadUrl(url("NVI", v));
     }
 
-    private String url(String abbr, VerseRepo.Verse v) {
+    private String url(String abbr, VerseRepo.Passage v) {
         return "https://www.bible.com/pt/bible/" + VerseRepo.versionId(this, abbr) + "/" + v.usfm() + "." + abbr;
     }
 
@@ -105,7 +120,7 @@ public class ReaderActivity extends Activity {
     }
 
     private void openYouVersion() {
-        VerseRepo.Verse v = VerseRepo.get(this, index);
+        VerseRepo.Passage v = VerseRepo.passage(this, start, end);
         String abbr = "NVI".equals(mode) ? "NVI" : "TB";
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url(abbr, v))));
     }
@@ -135,7 +150,7 @@ public class ReaderActivity extends Activity {
                     if (a != null) VerseRepo.setVersionId(this, "TB", a);
                     if (b != null) VerseRepo.setVersionId(this, "NVI", b);
                     Toast.makeText(this, "Salvo", Toast.LENGTH_SHORT).show();
-                    show(index);
+                    show(start, end);
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();

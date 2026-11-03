@@ -14,7 +14,7 @@ public class VerseWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context ctx, AppWidgetManager mgr, int[] ids) {
-        VerseRepo.Verse v = VerseRepo.today(ctx);
+        VerseRepo.Passage v = VerseRepo.today(ctx);
         for (int id : ids) mgr.updateAppWidget(id, build(ctx, v));
     }
 
@@ -36,17 +36,18 @@ public class VerseWidget extends AppWidgetProvider {
     static void updateAll(Context ctx) {
         AppWidgetManager mgr = AppWidgetManager.getInstance(ctx);
         int[] ids = mgr.getAppWidgetIds(new ComponentName(ctx, VerseWidget.class));
-        VerseRepo.Verse v = VerseRepo.today(ctx);
+        VerseRepo.Passage v = VerseRepo.today(ctx);
         for (int id : ids) mgr.updateAppWidget(id, build(ctx, v));
     }
 
-    private static RemoteViews build(Context ctx, VerseRepo.Verse v) {
+    private static RemoteViews build(Context ctx, VerseRepo.Passage v) {
         RemoteViews rv = new RemoteViews(ctx.getPackageName(), R.layout.widget);
         rv.setTextViewText(R.id.w_text, v.text);
         rv.setTextViewText(R.id.w_ref, v.reference());
 
         Intent open = new Intent(ctx, ReaderActivity.class)
-                .putExtra(ReaderActivity.EXTRA_INDEX, v.index)
+                .putExtra(ReaderActivity.EXTRA_START, v.first.index)
+                .putExtra(ReaderActivity.EXTRA_END, v.last.index)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent piOpen = PendingIntent.getActivity(ctx, 1, open,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
