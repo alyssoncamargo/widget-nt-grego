@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>NTGrego</AssemblyName>
+    <RootNamespace>NTGrego</RootNamespace>
+    <Product>NT Grego</Product>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <Version>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)../VERSION').Trim())</Version>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\app\src\main\assets\*.txt" LogicalName="%(Filename)%(Extension)" />
+    <Resource Include="app.ico" />
+  </ItemGroup>
+</Project>

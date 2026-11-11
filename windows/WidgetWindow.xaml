@@ -1,0 +1,23 @@
+<Window x:Class="NTGrego.WidgetWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="NT Grego" WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        ShowInTaskbar="False" ResizeMode="CanResizeWithGrip" MinWidth="220" MinHeight="100"
+        Width="380" Height="190">
+    <Border x:Name="Card" CornerRadius="16" Padding="18,16,14,10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="GreekText" FontFamily="{StaticResource GreekFont}" TextWrapping="Wrap"
+                       TextTrimming="WordEllipsis" LineHeight="28" Cursor="Hand"
+                       ToolTip="Clique para ler · arraste para mover · botão direito para opções" />
+            <DockPanel Grid.Row="1" Margin="0,6,0,0" LastChildFill="True">
+                <Button x:Name="ShuffleBtn" DockPanel.Dock="Right" Content="↻" FontSize="18" Width="30" Height="30"
+                        Style="{StaticResource IconBtn}" ToolTip="Outro trecho para hoje" Click="Shuffle_Click" />
+                <TextBlock x:Name="RefText" FontWeight="Bold" FontSize="13" VerticalAlignment="Center" />
+            </DockPanel>
+        </Grid>
+    </Border>
+</Window>

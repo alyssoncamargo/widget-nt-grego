@@ -1,0 +1,36 @@
+<Application x:Class="NTGrego.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ShutdownMode="OnExplicitShutdown">
+    <Application.Resources>
+        <FontFamily x:Key="GreekFont">Palatino Linotype, Gentium Plus, Times New Roman</FontFamily>
+        <SolidColorBrush x:Key="Accent" Color="#A0702A" />
+        <SolidColorBrush x:Key="Paper" Color="#FAF6EE" />
+        <SolidColorBrush x:Key="Ink" Color="#1E1A16" />
+        <SolidColorBrush x:Key="Bar" Color="#EDE4D3" />
+        <SolidColorBrush x:Key="Muted" Color="#8A8076" />
+        <Style x:Key="IconBtn" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground" Value="{StaticResource Accent}" />
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="Width" Value="40" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="b" Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="b" Property="Background" Value="#1AA0702A" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Application.Resources>
+</Application>

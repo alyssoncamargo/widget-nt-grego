@@ -16,8 +16,20 @@ jobs:
         with: { gradle-version: '8.14.3' }
       - run: gradle :app:assembleRelease --no-daemon
       - run: cp app/build/outputs/apk/release/app-release.apk NTGrego.apk
+      - uses: actions/setup-dotnet@v4
+        with: { dotnet-version: '8.0.x' }
+      - name: Build Windows (exe único, sem instalar .NET)
+        run: |
+          dotnet publish windows/NTGrego.csproj -c Release -r win-x64 --self-contained true \
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true \
+            -p:EnableCompressionInSingleFile=true -o winout
+          cp winout/NTGrego.exe NTGrego.exe
       - uses: actions/upload-artifact@v4
-        with: { name: NTGrego-apk, path: NTGrego.apk }
+        with:
+          name: NTGrego
+          path: |
+            NTGrego.apk
+            NTGrego.exe
       - name: Versão
         id: ver
         run: echo "v=v$(cat VERSION | tr -d '[:space:]')" >> "$GITHUB_OUTPUT"
@@ -31,8 +43,11 @@ jobs:
           tag_name: ${{ steps.ver.outputs.v }}
           target_commitish: ${{ github.sha }}
           name: NT Grego ${{ steps.ver.outputs.v }}
-          files: NTGrego.apk
+          files: |
+            NTGrego.apk
+            NTGrego.exe
           make_latest: true
           body: |
-            Widget com trecho do dia do NT em grego (SBLGNT) + leitor TB/NVI.
-            Instale baixando o NTGrego.apk abaixo.
+            Trecho do dia do NT em grego (SBLGNT) + leitor com TB e análise morfológica.
+            - Android: NTGrego.apk
+            - Windows 10/11 (64 bits): NTGrego.exe — não precisa instalar; basta executar.
