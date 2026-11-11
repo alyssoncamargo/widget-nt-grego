@@ -11,7 +11,6 @@
     <Product>NT Grego</Product>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <Version>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)../VERSION').Trim())</Version>
-    <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\app\src\main\assets\*.txt" LogicalName="%(Filename)%(Extension)" />
